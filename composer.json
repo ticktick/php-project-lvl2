@@ -1,0 +1,30 @@
+{
+    "name": "ticktick/hexlet-php-project-2",
+    "description": "Solution for Hexlet Generate diff project",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oleg Ageev",
+            "email": "ageev.oleg.v@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "docopt/docopt": "^1.0.4",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "bin": [
+        "bin/brain-games",
+        "bin/brain-calc",
+        "bin/brain-gcd",
+        "bin/brain-progression",
+        "bin/brain-prime"
+    ],
+    "autoload": {
+
+    },
+    "scripts": {
+        "phpcs": "phpcs"
+    }
+}
