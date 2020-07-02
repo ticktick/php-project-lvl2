@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use function Differ\genDiff;
+
 $autoloadPathGlobal = __DIR__ . '/../../autoload.php';
 $autoloadPathLocal = __DIR__ . '/vendor/autoload.php';
 if (file_exists($autoloadPathGlobal)) {
@@ -23,5 +25,15 @@ Options:
 DOC;
 
 $args = Docopt::handle($doc, ['version' => 'Generate diff 1.0']);
-foreach ($args as $k=>$v)
-    echo $k . ': ' . json_encode($v) . PHP_EOL;
+
+$pathToFile1 = $args['<firstFile>'] ?? null;
+$pathToFile2 = $args['<secondFile>'] ?? null;
+
+if ($pathToFile1 && $pathToFile2) {
+    try {
+        $diff = genDiff($pathToFile1, $pathToFile2);
+        echo $diff . "\n";
+    } catch (Exception $e) {
+        echo "gendiff: " . $e->getMessage() . "\n";
+    }
+}

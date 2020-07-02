@@ -12,7 +12,8 @@
     "minimum-stability": "dev",
     "require": {
         "docopt/docopt": "^1.0.4",
-        "squizlabs/php_codesniffer": "^3.5"
+        "squizlabs/php_codesniffer": "^3.5",
+        "funct/funct": "^1.5.0"
     },
     "bin": [
         "bin/brain-games",
@@ -22,7 +23,9 @@
         "bin/brain-prime"
     ],
     "autoload": {
-
+        "files": [
+            "src/Differ.php"
+        ]
     },
     "scripts": {
         "phpcs": "phpcs"
