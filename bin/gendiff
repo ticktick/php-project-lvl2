@@ -3,8 +3,8 @@
 
 use function Differ\genDiff;
 
-$autoloadPathGlobal = __DIR__ . '/../../autoload.php';
-$autoloadPathLocal = __DIR__ . '/vendor/autoload.php';
+$autoloadPathGlobal = __DIR__ . '/../../../autoload.php';
+$autoloadPathLocal = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($autoloadPathGlobal)) {
     require_once $autoloadPathGlobal;
 } else {
@@ -32,8 +32,9 @@ $pathToFile2 = $args['<secondFile>'] ?? null;
 if ($pathToFile1 && $pathToFile2) {
     try {
         $diff = genDiff($pathToFile1, $pathToFile2);
-        echo $diff . "\n";
+        echo $diff;
     } catch (Exception $e) {
-        echo "gendiff: " . $e->getMessage() . "\n";
+        echo "gendiff: " . $e->getMessage();
     }
+    echo "\n";
 }

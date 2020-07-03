@@ -20,6 +20,9 @@
             "src/Differ.php"
         ]
     },
+    "bin": [
+        "bin/gendiff"
+    ],
     "scripts": {
         "phpcs": "phpcs"
     }
