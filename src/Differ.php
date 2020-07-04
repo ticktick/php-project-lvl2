@@ -15,13 +15,13 @@ const LINES_DELIMITER = "\n";
 function genDiff(string $pathToFile1, string $pathToFile2): string
 {
     if (!fileExists($pathToFile1) || !fileExists($pathToFile1)) {
-        throw new \Exception("some of file paths are invalid");
+        throw new \Error("some of file paths are invalid");
     }
     try {
         $file1Fields = parseFields(getFileContents($pathToFile1));
         $file2Fields = parseFields(getFileContents($pathToFile2));
     } catch (\TypeError $e) {
-        throw new \Exception("some of files contain invalid json");
+        throw new \Error("some of files contain invalid json");
     }
 
     $unchangedFields = getUnchangedFields($file1Fields, $file2Fields);
