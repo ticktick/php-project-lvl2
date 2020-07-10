@@ -3,4 +3,8 @@
 
 ## Usage example
 
+#### JSON
 [![asciicast](https://asciinema.org/a/MGHUyxSi8Xbx2RLJIWMAEHNOp.svg)](https://asciinema.org/a/MGHUyxSi8Xbx2RLJIWMAEHNOp)
+
+#### YAML
+[![asciicast](https://asciinema.org/a/Y4VBZH62cqwyMNIWpYVr1zuhI.svg)](https://asciinema.org/a/Y4VBZH62cqwyMNIWpYVr1zuhI)
