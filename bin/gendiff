@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use function Differ\genDiff;
+use function Differ\Differ\genDiff;
 
 $autoloadPathGlobal = __DIR__ . '/../../../autoload.php';
 $autoloadPathLocal = __DIR__ . '/../vendor/autoload.php';

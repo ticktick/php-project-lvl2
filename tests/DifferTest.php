@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use function Differ\genDiff;
+use function Differ\Differ\genDiff;
 
 class DifferTest extends TestCase
 {
@@ -11,10 +11,18 @@ class DifferTest extends TestCase
         genDiff('/file/not/exists1', '/file/not/exists2');
     }
 
-    public function testGenDiff()
+    public function testGenDiffJson()
     {
         $file1Path = $this->getFixtureFilePath('file1.json');
         $file2Path = $this->getFixtureFilePath('file2.json');
+        $diff = $this->getFixtureFileContent('json.diff');
+        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
+    }
+
+    public function testGenDiffYaml()
+    {
+        $file1Path = $this->getFixtureFilePath('file1.yml');
+        $file2Path = $this->getFixtureFilePath('file2.yml');
         $diff = $this->getFixtureFileContent('json.diff');
         $this->assertEquals($diff, genDiff($file1Path, $file2Path));
     }

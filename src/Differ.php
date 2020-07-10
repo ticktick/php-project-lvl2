@@ -1,8 +1,10 @@
 <?php
 
-namespace Differ;
+namespace Differ\Differ;
 
 use Funct\Collection;
+
+use function Differ\Parsers\getParser;
 
 const LINES_DELIMITER = "\n";
 
@@ -18,10 +20,10 @@ function genDiff(string $pathToFile1, string $pathToFile2): string
         throw new \Error("some of file paths are invalid");
     }
     try {
-        $file1Fields = parseFields(getFileContents($pathToFile1));
-        $file2Fields = parseFields(getFileContents($pathToFile2));
+        $file1Fields = parseFields($pathToFile1);
+        $file2Fields = parseFields($pathToFile2);
     } catch (\TypeError $e) {
-        throw new \Error("some of files contain invalid json");
+        throw new \Error("some of files contain invalid data");
     }
 
     $unchangedFields = getUnchangedFields($file1Fields, $file2Fields);
@@ -125,12 +127,28 @@ function formatPair($prefix, $key, $value)
     return sprintf("    %s %s: %s", $prefix, $key, $value);
 }
 
-function parseFields(string $str): array
+function parseFields(string $pathToFile): array
 {
-    return json_decode($str, true);
+    $fileContent = getFileContent($pathToFile);
+    $parser = getParser(getType($pathToFile));
+    return $parser($fileContent);
 }
 
-function getFileContents(string $pathToFile): string
+function getType(string $pathToFile): string
+{
+    $extension = pathinfo($pathToFile)['extension'];
+    switch ($extension) {
+        case 'json':
+            return 'json';
+        case 'yml':
+        case 'yaml':
+            return 'yaml';
+        default:
+            throw new \Error('unknown file type');
+    }
+}
+
+function getFileContent(string $pathToFile): string
 {
     return file_get_contents($pathToFile);
 }
