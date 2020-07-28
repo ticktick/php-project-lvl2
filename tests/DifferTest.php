@@ -27,6 +27,22 @@ class DifferTest extends TestCase
         $this->assertEquals($diff, genDiff($file1Path, $file2Path));
     }
 
+    public function testGenDiffComplexJson()
+    {
+        $file1Path = $this->getFixtureFilePath('file1complex.json');
+        $file2Path = $this->getFixtureFilePath('file2complex.json');
+        $diff = $this->getFixtureFileContent('complex.json.diff');
+        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
+    }
+
+    public function testGenDiffComplexYaml()
+    {
+        $file1Path = $this->getFixtureFilePath('file1complex.yaml');
+        $file2Path = $this->getFixtureFilePath('file2complex.yaml');
+        $diff = $this->getFixtureFileContent('complex.json.diff');
+        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
+    }
+
     function getFixtureFilePath(string $fixtureName): string
     {
         return sprintf("%s/fixtures/%s", __DIR__, $fixtureName);
