@@ -8,3 +8,6 @@
 
 #### YAML
 [![asciicast](https://asciinema.org/a/Y4VBZH62cqwyMNIWpYVr1zuhI.svg)](https://asciinema.org/a/Y4VBZH62cqwyMNIWpYVr1zuhI)
+
+#### Nested Structures
+[![asciicast](https://asciinema.org/a/8Y8hbd02dxypfjn0rLxRFdNTN.svg)](https://asciinema.org/a/8Y8hbd02dxypfjn0rLxRFdNTN)
