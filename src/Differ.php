@@ -3,6 +3,8 @@
 namespace Differ\Differ;
 
 use Funct\Collection;
+use Error;
+use TypeError;
 
 use function Differ\Parsers\getParser;
 use function Differ\Formatter\format;
@@ -18,24 +20,22 @@ const TYPE_NESTED = 'nested';
 /**
  * @param string $pathToFile1
  * @param string $pathToFile2
+ * @param string $format
  * @return string
- * @throws \Exception
  */
-function genDiff(string $pathToFile1, string $pathToFile2): string
+function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'json'): string
 {
     if (!fileExists($pathToFile1) || !fileExists($pathToFile1)) {
-        throw new \Error("some of file paths are invalid");
+        throw new Error("some of file paths are invalid");
     }
     try {
         $file1Fields = parseFields($pathToFile1);
         $file2Fields = parseFields($pathToFile2);
-    } catch (\TypeError $e) {
-        throw new \Error("some of files contain invalid data");
+    } catch (TypeError $e) {
+        throw new Error("some of files contain invalid data");
     }
     $tree = toDiffTree($file1Fields, $file2Fields);
-    $formatted = format($tree);
-
-    return $formatted;
+    return format($tree, $format);
 }
 
 function toNode(string $name, string $type, $oldValue = null, $newValue = null, array $children = [])
@@ -100,7 +100,7 @@ function getType(string $pathToFile): string
         case 'yaml':
             return 'yaml';
         default:
-            throw new \Error('unknown file type');
+            throw new Error('unknown file type');
     }
 }
 

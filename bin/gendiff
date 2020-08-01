@@ -26,12 +26,13 @@ DOC;
 
 $args = Docopt::handle($doc, ['version' => 'Generate json.diff 1.0']);
 
+$format = $args['--format'] ?? 'json';
 $pathToFile1 = $args['<firstFile>'] ?? null;
 $pathToFile2 = $args['<secondFile>'] ?? null;
 
 if ($pathToFile1 && $pathToFile2) {
     try {
-        $diff = genDiff($pathToFile1, $pathToFile2);
+        $diff = genDiff($pathToFile1, $pathToFile2, $format);
         echo $diff;
     } catch (Exception $e) {
         echo "gendiff: " . $e->getMessage();
