@@ -11,3 +11,6 @@
 
 #### Nested Structures
 [![asciicast](https://asciinema.org/a/8Y8hbd02dxypfjn0rLxRFdNTN.svg)](https://asciinema.org/a/8Y8hbd02dxypfjn0rLxRFdNTN)
+
+#### Plain Format
+[![asciicast](https://asciinema.org/a/FYEl8f6VgGn2P2PNUGeGcOnJ3.svg)](https://asciinema.org/a/FYEl8f6VgGn2P2PNUGeGcOnJ3)
