@@ -22,8 +22,9 @@
             "src/Differ.php",
             "src/Formatter.php",
             "src/Parsers.php",
-            "src/Formatters/Json.php",
-            "src/Formatters/Plain.php"
+            "src/Formatters/Pretty.php",
+            "src/Formatters/Plain.php",
+            "src/Formatters/Json.php"
         ]
     },
     "bin": [

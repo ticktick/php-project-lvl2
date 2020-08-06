@@ -4,7 +4,6 @@ namespace Differ\Formatters\Plain;
 
 use Error;
 
-use const Differ\Differ\NEWLINE;
 use const Differ\Differ\TYPE_ADDED;
 use const Differ\Differ\TYPE_NESTED;
 use const Differ\Differ\TYPE_REMOVED;
@@ -17,7 +16,7 @@ function format(array $tree): string
         return formatNode($node);
     }, $tree);
 
-    return implode(NEWLINE, $resultOutput);
+    return implode(PHP_EOL, $resultOutput);
 }
 
 function formatNode(array $node, int $depth = 1, string $keyPrefix = '')
@@ -45,7 +44,7 @@ function formatNode(array $node, int $depth = 1, string $keyPrefix = '')
                 return formatNode($child, $depth, $key);
             }, $node['children']);
             $formattedValues = array_filter($formattedValues);
-            return implode(NEWLINE, $formattedValues);
+            return implode(PHP_EOL, $formattedValues);
     }
 
     throw new Error('Unknown node type');

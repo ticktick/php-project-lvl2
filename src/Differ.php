@@ -9,8 +9,6 @@ use TypeError;
 use function Differ\Parsers\getParser;
 use function Differ\Formatter\format;
 
-const NEWLINE = PHP_EOL;
-
 const TYPE_UNCHANGED = 'unchanged';
 const TYPE_CHANGED = 'changed';
 const TYPE_ADDED = 'added';
@@ -23,7 +21,7 @@ const TYPE_NESTED = 'nested';
  * @param string $format
  * @return string
  */
-function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'json'): string
+function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'pretty'): string
 {
     if (!fileExists($pathToFile1) || !fileExists($pathToFile1)) {
         throw new Error("some of file paths are invalid");
