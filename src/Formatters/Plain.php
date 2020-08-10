@@ -12,14 +12,14 @@ use const Differ\Differ\TYPE_CHANGED;
 
 function format(array $tree): string
 {
-    $resultOutput = array_map(function ($node) use ($tree) {
+    $lines = array_map(function ($node) use ($tree) {
         return formatNode($node);
     }, $tree);
 
-    return implode(PHP_EOL, $resultOutput);
+    return implode(PHP_EOL, $lines);
 }
 
-function formatNode(array $node, int $depth = 1, string $keyPrefix = '')
+function formatNode(array $node, string $keyPrefix = ''): string
 {
     $type = $node['type'];
     $key = formatKey($keyPrefix, $node['name']);
@@ -39,18 +39,17 @@ function formatNode(array $node, int $depth = 1, string $keyPrefix = '')
         case TYPE_UNCHANGED:
             return '';
         case TYPE_NESTED:
-            $depth += 1;
-            $formattedValues = array_map(function ($child) use ($depth, $key) {
-                return formatNode($child, $depth, $key);
+            $formattedValues = array_map(function ($child) use ($key) {
+                return formatNode($child, $key);
             }, $node['children']);
             $formattedValues = array_filter($formattedValues);
             return implode(PHP_EOL, $formattedValues);
     }
 
-    throw new Error('Unknown node type');
+    throw new Error('unknown node type');
 }
 
-function formatKey($prefix, $key)
+function formatKey($prefix, $key): string
 {
     if (empty($prefix)) {
         return $key;

@@ -23,7 +23,7 @@ const TYPE_NESTED = 'nested';
  */
 function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'pretty'): string
 {
-    if (!fileExists($pathToFile1) || !fileExists($pathToFile1)) {
+    if (!file_exists($pathToFile1) || !file_exists($pathToFile1)) {
         throw new Error("some of file paths are invalid");
     }
     try {
@@ -32,11 +32,11 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'pre
     } catch (TypeError $e) {
         throw new Error("some of files contain invalid data");
     }
-    $tree = toDiffTree($file1Fields, $file2Fields);
+    $tree = makeDiffTree($file1Fields, $file2Fields);
     return format($tree, $format);
 }
 
-function toNode(string $name, string $type, $oldValue = null, $newValue = null, array $children = [])
+function makeNode(string $name, string $type, $oldValue = null, $newValue = null, array $children = [])
 {
     $node = [
         'name' => $name,
@@ -50,7 +50,7 @@ function toNode(string $name, string $type, $oldValue = null, $newValue = null, 
     return $node;
 }
 
-function toDiffTree(object $structure1, object $structure2)
+function makeDiffTree(object $structure1, object $structure2)
 {
     $structure1Keys = getObjectKeys($structure1);
     $structure2Keys = getObjectKeys($structure2);
@@ -58,19 +58,25 @@ function toDiffTree(object $structure1, object $structure2)
 
     $tree = array_map(function ($key) use ($structure1, $structure2) {
         if (property_exists($structure1, $key) && !property_exists($structure2, $key)) {
-            return toNode($key, TYPE_REMOVED, $structure1->$key);
+            return makeNode($key, TYPE_REMOVED, $structure1->$key);
         }
         if (!property_exists($structure1, $key) && property_exists($structure2, $key)) {
-            return toNode($key, TYPE_ADDED, null, $structure2->$key);
+            return makeNode($key, TYPE_ADDED, null, $structure2->$key);
         }
         if (is_object($structure1->$key) && is_object($structure2->$key)) {
-            return toNode($key, TYPE_NESTED, null, null, toDiffTree($structure1->$key, $structure2->$key));
+            return makeNode(
+                $key,
+                TYPE_NESTED,
+                null,
+                null,
+                makeDiffTree($structure1->$key, $structure2->$key)
+            );
         }
         if ($structure1->$key === $structure2->$key) {
-            return toNode($key, TYPE_UNCHANGED, $structure1->$key);
+            return makeNode($key, TYPE_UNCHANGED, $structure1->$key);
         }
 
-        return toNode($key, TYPE_CHANGED, $structure1->$key, $structure2->$key);
+        return makeNode($key, TYPE_CHANGED, $structure1->$key, $structure2->$key);
     }, $allKeys);
 
     return $tree;
@@ -83,15 +89,21 @@ function getObjectKeys(object $obj)
 
 function parseFields(string $pathToFile): object
 {
-    $fileContent = getFileContent($pathToFile);
-    $parser = getParser(getType($pathToFile));
+    $fileContent = file_get_contents($pathToFile);
+    $fileExtension = getFileExtension($pathToFile);
+    $fileType = getTypeByExtension($fileExtension);
+    $parser = getParser($fileType);
     return $parser($fileContent);
 }
 
-function getType(string $pathToFile): string
+function getFileExtension(string $pathToFile): string
 {
-    $extension = pathinfo($pathToFile)['extension'];
-    switch ($extension) {
+    return pathinfo($pathToFile)['extension'];
+}
+
+function getTypeByExtension(string $fileExtension): string
+{
+    switch ($fileExtension) {
         case 'json':
             return 'json';
         case 'yml':
@@ -100,14 +112,4 @@ function getType(string $pathToFile): string
         default:
             throw new Error('unknown file type');
     }
-}
-
-function getFileContent(string $pathToFile): string
-{
-    return file_get_contents($pathToFile);
-}
-
-function fileExists($pathToFile)
-{
-    return file_exists($pathToFile);
 }

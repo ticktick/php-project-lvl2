@@ -24,7 +24,7 @@ Options:
 
 DOC;
 
-$args = Docopt::handle($doc, ['version' => 'Generate json.diff 1.0']);
+$args = Docopt::handle($doc, ['version' => 'Generate json.diff 1.5']);
 
 $format = $args['--format'];
 $pathToFile1 = $args['<firstFile>'] ?? null;
@@ -37,5 +37,5 @@ if ($pathToFile1 && $pathToFile2) {
     } catch (Exception $e) {
         echo "gendiff: " . $e->getMessage();
     }
-    echo "\n";
+    echo PHP_EOL;
 }

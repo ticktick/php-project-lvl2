@@ -10,16 +10,16 @@ use const Differ\Differ\TYPE_REMOVED;
 use const Differ\Differ\TYPE_UNCHANGED;
 use const Differ\Differ\TYPE_CHANGED;
 
-function format(array $tree)
+function format(array $tree): string
 {
-    $resultOutput = array_map(function ($node) use ($tree) {
+    $lines = array_map(function ($node) use ($tree) {
         return formatNode($node);
     }, $tree);
 
-    return '{' . PHP_EOL . implode(PHP_EOL, $resultOutput) . PHP_EOL . '}';
+    return '{' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}';
 }
 
-function formatNode(array $node, int $depth = 1)
+function formatNode(array $node, int $depth = 1): string
 {
     $type = $node['type'];
     $key = $node['name'];
@@ -53,7 +53,7 @@ function formatNode(array $node, int $depth = 1)
             return "{$indent}{$key}: {" . PHP_EOL . "{$formattedValue}" . PHP_EOL . "{$indent}}";
     }
 
-    throw new Error('Unknown node type');
+    throw new Error('unknown node type');
 }
 
 function formatValue($value, int $depth)
@@ -70,12 +70,12 @@ function formatValue($value, int $depth)
     return $value;
 }
 
-function getShortIndent(int $depth)
+function getShortIndent(int $depth): string
 {
     return getIndent($depth, true);
 }
 
-function getIndent(int $depth, bool $short = false)
+function getIndent(int $depth, bool $short = false): string
 {
     $spacesNeed = 4 * $depth;
     if ($short) {
