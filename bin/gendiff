@@ -30,12 +30,5 @@ $format = $args['--format'];
 $pathToFile1 = $args['<firstFile>'] ?? null;
 $pathToFile2 = $args['<secondFile>'] ?? null;
 
-if ($pathToFile1 && $pathToFile2) {
-    try {
-        $diff = genDiff($pathToFile1, $pathToFile2, $format);
-        echo $diff;
-    } catch (Exception $e) {
-        echo "gendiff: " . $e->getMessage();
-    }
-    echo PHP_EOL;
-}
+echo genDiff($pathToFile1, $pathToFile2, $format);
+echo "\n";

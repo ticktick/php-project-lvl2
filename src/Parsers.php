@@ -2,16 +2,17 @@
 
 namespace Differ\Parsers;
 
+use Error;
 use Symfony\Component\Yaml\Yaml;
 
-function getParser(string $fileType): callable
+function getParser(string $dataType): callable
 {
-    switch ($fileType) {
+    switch ($dataType) {
         case 'json':
             return fn($str) => json_decode($str);
         case 'yaml':
             return fn($str) => Yaml::parse($str, Yaml::PARSE_OBJECT_FOR_MAP);
         default:
-            return fn($str) => $str;
+            throw new Error("unknown data type: {$dataType}");
     }
 }

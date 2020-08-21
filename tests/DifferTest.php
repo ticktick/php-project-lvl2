@@ -1,5 +1,9 @@
 <?php
+
+namespace Differ\Tests;
+
 use PHPUnit\Framework\TestCase;
+use Error;
 
 use function Differ\Differ\genDiff;
 
@@ -11,76 +15,45 @@ class DifferTest extends TestCase
         genDiff('/file/not/exists1', '/file/not/exists2');
     }
 
-    public function testGenDiffJson()
+    /**
+     * @dataProvider additionProvider
+     */
+    public function testGenDiff($fileName1, $fileName2, $diffFileName, $format = 'pretty')
     {
-        $file1Path = $this->getFixtureFilePath('file1.json');
-        $file2Path = $this->getFixtureFilePath('file2.json');
-        $diff = $this->getFixtureFileContent('pretty.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
+        $file1Path = $this->getFixtureFilePath($fileName1);
+        $file2Path = $this->getFixtureFilePath($fileName2);
+        $diff = $this->getFixtureFileContent($diffFileName);
+        $this->assertEquals($diff, genDiff($file1Path, $file2Path, $format));
     }
 
-    public function testGenDiffYaml()
+    public function additionProvider()
     {
-        $file1Path = $this->getFixtureFilePath('file1.yml');
-        $file2Path = $this->getFixtureFilePath('file2.yml');
-        $diff = $this->getFixtureFileContent('pretty.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
+        return [
+            'flat json files' =>
+                ['file1.json', 'file2.json', 'pretty.diff'],
+            'flat yaml files' =>
+                ['file1.yml', 'file2.yml', 'pretty.diff'],
+            'complex struct json files, default format' =>
+                ['file1complex.json', 'file2complex.json', 'complex.pretty.diff'],
+            'complex struct yaml files, pretty format' =>
+                ['file1complex.yaml', 'file2complex.yaml', 'complex.pretty.diff', 'pretty'],
+            'complex struct json files, plain format' =>
+                ['file1complex.json', 'file2complex.json', 'complex.plain.diff', 'plain'],
+            'complex struct yaml files, plain format' =>
+                ['file1complex.yaml', 'file2complex.yaml', 'complex.plain.diff', 'plain'],
+            'complex struct json files, json format' =>
+                ['file1complex.json', 'file2complex.json', 'complex.json.diff', 'json'],
+            'complex struct yaml files, json format' =>
+                ['file1complex.yaml', 'file2complex.yaml', 'complex.json.diff', 'json'],
+        ];
     }
 
-    public function testGenDiffComplexJson()
-    {
-        $file1Path = $this->getFixtureFilePath('file1complex.json');
-        $file2Path = $this->getFixtureFilePath('file2complex.json');
-        $diff = $this->getFixtureFileContent('complex.pretty.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
-    }
-
-    public function testGenDiffComplexYaml()
-    {
-        $file1Path = $this->getFixtureFilePath('file1complex.yaml');
-        $file2Path = $this->getFixtureFilePath('file2complex.yaml');
-        $diff = $this->getFixtureFileContent('complex.pretty.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path));
-    }
-
-    public function testGenDiffComplexJsonToPlainFormat()
-    {
-        $file1Path = $this->getFixtureFilePath('file1complex.json');
-        $file2Path = $this->getFixtureFilePath('file2complex.json');
-        $diff = $this->getFixtureFileContent('complex.plain.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path, 'plain'));
-    }
-
-    public function testGenDiffComplexYamlToPlainFormat()
-    {
-        $file1Path = $this->getFixtureFilePath('file1complex.yaml');
-        $file2Path = $this->getFixtureFilePath('file2complex.yaml');
-        $diff = $this->getFixtureFileContent('complex.plain.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path, 'plain'));
-    }
-
-    public function testGenDiffComplexJsonToJsonFormat()
-    {
-        $file1Path = $this->getFixtureFilePath('file1complex.json');
-        $file2Path = $this->getFixtureFilePath('file2complex.json');
-        $diff = $this->getFixtureFileContent('complex.json.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path, 'json'));
-    }
-
-    public function testGenDiffComplexYamlToJsonFormat()
-    {
-        $file1Path = $this->getFixtureFilePath('file1complex.yaml');
-        $file2Path = $this->getFixtureFilePath('file2complex.yaml');
-        $diff = $this->getFixtureFileContent('complex.json.diff');
-        $this->assertEquals($diff, genDiff($file1Path, $file2Path, 'json'));
-    }
-
-    function getFixtureFilePath(string $fixtureName): string
+    public function getFixtureFilePath(string $fixtureName): string
     {
         return sprintf("%s/fixtures/%s", __DIR__, $fixtureName);
     }
 
-    function getFixtureFileContent(string $fixtureName): string
+    public function getFixtureFileContent(string $fixtureName): string
     {
         return file_get_contents($this->getFixtureFilePath($fixtureName));
     }

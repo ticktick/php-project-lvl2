@@ -12,48 +12,47 @@ use const Differ\Differ\TYPE_CHANGED;
 
 function format(array $tree): string
 {
-    $lines = array_map(function ($node) use ($tree) {
-        return formatNode($node);
-    }, $tree);
-
-    return '{' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}';
+    $lines = formatLines($tree);
+    return "{\n" . implode("\n", $lines) . "\n}";
 }
 
-function formatNode(array $node, int $depth = 1): string
+function formatLines(array $tree, int $depth = 1): array
 {
-    $type = $node['type'];
-    $key = $node['name'];
-    $oldValue = $node['oldValue'];
-    $newValue = $node['newValue'];
+    $formatNode = function ($node) use ($depth) {
+        $type = $node['type'];
+        $key = $node['name'];
+        $oldValue = $node['oldValue'];
+        $newValue = $node['newValue'];
 
-    switch ($type) {
-        case TYPE_REMOVED:
-            $indent = getShortIndent($depth);
-            $formattedValue = formatValue($oldValue, $depth);
-            return "{$indent}- {$key}: {$formattedValue}";
-        case TYPE_ADDED:
-            $indent = getShortIndent($depth);
-            $formattedValue = formatValue($newValue, $depth);
-            return "{$indent}+ {$key}: {$formattedValue}";
-        case TYPE_UNCHANGED:
-            $indent = getIndent($depth);
-            $formattedValue = formatValue($oldValue, $depth);
-            return "{$indent}{$key}: {$formattedValue}";
-        case TYPE_CHANGED:
-            $indent = getShortIndent($depth);
-            $formattedNewValue = formatValue($newValue, $depth);
-            $formattedOldValue = formatValue($oldValue, $depth);
-            return "{$indent}+ {$key}: {$formattedNewValue}" . PHP_EOL . "{$indent}- {$key}: {$formattedOldValue}";
-        case TYPE_NESTED:
-            $indent = getIndent($depth);
-            $depth += 1;
-            $formattedValue = implode(PHP_EOL, array_map(function ($child) use ($depth) {
-                return formatNode($child, $depth);
-            }, $node['children']));
-            return "{$indent}{$key}: {" . PHP_EOL . "{$formattedValue}" . PHP_EOL . "{$indent}}";
-    }
+        switch ($type) {
+            case TYPE_REMOVED:
+                $indent = getShortIndent($depth);
+                $formattedValue = formatValue($oldValue, $depth);
+                return "{$indent}- {$key}: {$formattedValue}";
+            case TYPE_ADDED:
+                $indent = getShortIndent($depth);
+                $formattedValue = formatValue($newValue, $depth);
+                return "{$indent}+ {$key}: {$formattedValue}";
+            case TYPE_UNCHANGED:
+                $indent = getIndent($depth);
+                $formattedValue = formatValue($oldValue, $depth);
+                return "{$indent}{$key}: {$formattedValue}";
+            case TYPE_CHANGED:
+                $indent = getShortIndent($depth);
+                $formattedNewValue = formatValue($newValue, $depth);
+                $formattedOldValue = formatValue($oldValue, $depth);
+                return "{$indent}+ {$key}: {$formattedNewValue}\n{$indent}- {$key}: {$formattedOldValue}";
+            case TYPE_NESTED:
+                $indent = getIndent($depth);
+                $depth += 1;
+                $formattedValue = implode("\n", formatLines($node['children'], $depth));
+                return "{$indent}{$key}: {\n{$formattedValue}\n{$indent}}";
+        }
 
-    throw new Error('unknown node type');
+        throw new Error("unknown node type: {$type}");
+    };
+
+    return array_map($formatNode, $tree);
 }
 
 function formatValue($value, int $depth)
@@ -62,7 +61,7 @@ function formatValue($value, int $depth)
         $values = array_map(function ($key) use ($value, $depth) {
             return getIndent($depth + 1) . "{$key}: " . formatValue($value->$key, $depth + 1);
         }, array_keys(get_object_vars($value)));
-        return '{' . PHP_EOL . implode(PHP_EOL, $values) . PHP_EOL . getIndent($depth) . '}';
+        return "{\n" . implode("\n", $values) . "\n" . getIndent($depth) . "}";
     }
     if (is_bool($value)) {
         return $value ? 'true' : 'false';

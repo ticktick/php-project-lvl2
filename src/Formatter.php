@@ -18,6 +18,6 @@ function format(array $tree, string $type): string
         case 'json':
             return formatJson($tree);
         default:
-            throw new Error('unknown format');
+            throw new Error("unknown format: {$type}");
     }
 }

@@ -12,41 +12,40 @@ use const Differ\Differ\TYPE_CHANGED;
 
 function format(array $tree): string
 {
-    $lines = array_map(function ($node) use ($tree) {
-        return formatNode($node);
-    }, $tree);
-
-    return implode(PHP_EOL, $lines);
+    $lines = formatLines($tree);
+    return implode("\n", $lines);
 }
 
-function formatNode(array $node, string $keyPrefix = ''): string
+function formatLines(array $tree, string $keyPrefix = ''): array
 {
-    $type = $node['type'];
-    $key = formatKey($keyPrefix, $node['name']);
-    $oldValue = $node['oldValue'];
-    $newValue = $node['newValue'];
+    $formatNode = function ($node) use ($keyPrefix) {
+        $type = $node['type'];
+        $key = formatKey($keyPrefix, $node['name']);
+        $oldValue = $node['oldValue'];
+        $newValue = $node['newValue'];
 
-    switch ($type) {
-        case TYPE_REMOVED:
-            return "Property '{$key}' was removed";
-        case TYPE_ADDED:
-            $formattedValue = formatValue($newValue);
-            return "Property '{$key}' was added with value: '{$formattedValue}'";
-        case TYPE_CHANGED:
-            $formattedNewValue = formatValue($newValue);
-            $formattedOldValue = formatValue($oldValue);
-            return "Property '{$key}' was changed. From '{$formattedOldValue}' to '{$formattedNewValue}'";
-        case TYPE_UNCHANGED:
-            return '';
-        case TYPE_NESTED:
-            $formattedValues = array_map(function ($child) use ($key) {
-                return formatNode($child, $key);
-            }, $node['children']);
-            $formattedValues = array_filter($formattedValues);
-            return implode(PHP_EOL, $formattedValues);
-    }
+        switch ($type) {
+            case TYPE_REMOVED:
+                return "Property '{$key}' was removed";
+            case TYPE_ADDED:
+                $formattedValue = formatValue($newValue);
+                return "Property '{$key}' was added with value: '{$formattedValue}'";
+            case TYPE_CHANGED:
+                $formattedNewValue = formatValue($newValue);
+                $formattedOldValue = formatValue($oldValue);
+                return "Property '{$key}' was changed. From '{$formattedOldValue}' to '{$formattedNewValue}'";
+            case TYPE_UNCHANGED:
+                return null;
+            case TYPE_NESTED:
+                $formattedValues = formatLines($node['children'], $key);
+                $formattedValues = array_filter($formattedValues);
+                return implode("\n", $formattedValues);
+        }
 
-    throw new Error('unknown node type');
+        throw new Error("unknown node type: {$type}");
+    };
+
+    return array_map($formatNode, $tree);
 }
 
 function formatKey($prefix, $key): string
